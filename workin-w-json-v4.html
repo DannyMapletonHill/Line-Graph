@@ -84,7 +84,7 @@
                 var viz = svg.append("path").attr("d", lineFun(ds.monthlySales)).attr("stroke", "purple").attr("stroke-width", 2).attr("fill", "none"); 
 
 
-				var labels = svg.selectAll("text")
+				var labels = svg.selectAll("text") // labels not showin when x-axis is on 
 							.data(ds.monthlySales).enter()
 							.append("text")
 							.text(function(d){return d.sales;})
