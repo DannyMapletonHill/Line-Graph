@@ -141,7 +141,11 @@
 														
 				var xAxis = svg.selectAll("g.x-axis").call(xAxisGen)
 				
-                var viz = svg.selectAll(".path-"+ds.category).attr("d", lineFun(ds.monthlySales));
+                var viz = svg.selectAll(".path-"+ds.category)
+							.transition() //draws
+							.duration(500)
+							.ease(d3.easeCircle)
+							.attr("d", lineFun(ds.monthlySales));
 											
 
 				var labels = svg.selectAll("text") // labels not showin when x-axis is on 
