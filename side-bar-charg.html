@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<script src="https://d3js.org/d3.v4.min.js"></script>  
+
+<style>
+	.bar{
+		fill: #50E3C2; 
+		shape-rendering: crispEdges; 
+	}
+	.bar-label{
+		fill:white;
+		text-anchor: end;
+		font-size:24px;
+	}
+
+</style>
+</head>
+<body>
+
+
+<script> 
+	var w= 240;
+	var h = 250;
+	var data = [132,71,337,93,78,43,20,16,30,8,17,21];
+	
+	var x = d3.scaleLinear()
+				.domain([0, d3.max(data)])
+				.range([0,w]);
+				
+	var y = d3.scaleLinear()
+				.domain([0, data.length])
+				.range([0, h])
+	
+	var svg = d3.select("body").append("svg") 
+				.attr("id", "chart")
+				.attr("width", w)
+				.attr("height", h);
+				
+	svg.selectAll(".bar")
+		.data(data)
+		.enter()
+			.append("rect")
+			.attr("class", "bar")
+			.attr("x",0)
+			.attr("y",function (d,i){
+				return y(i);
+			})
+			.attr("width", function(d,i){
+				return x(d);
+			})
+			.attr("height", function(d,i){ return y(1) -5;});
+			
+	svg.selectAll(".bar-label")
+		.data(data).enter()
+			.append("text")
+			.classed("bar-label", true)
+			.attr("x", function(d,i){
+				return x(d)
+			})
+			.attr("y",function (d,i){
+				return y(i);})
+			.attr("dx", 25 )
+			.attr("dy", function(d,i){
+				return y(1)/1.5 + 2;
+			})
+			.text(function(d,i){
+				return d; 
+			});
+			
+				</script>
+</body>
+</html>
