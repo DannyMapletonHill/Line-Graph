@@ -45,7 +45,6 @@ var yAxis = d3.axisLeft(y)
 				})
 				.tickSize(20);
 var xGridlines = d3.axisBottom(x).tickValues(tickValues).tickSize(-height, -height).tickFormat("");
-
 				
 var yGridlines = d3.axisLeft(y).tickSize(-width,0,0 )
 					.tickFormat("")
@@ -61,7 +60,7 @@ function drawAxis(params){
 		this.append("g")
 			.call(params.gridlines.x)
 			.classed("gridline x", true)
-			.attr("transform", "translate(" + 0 + "," + 0 + ")");
+			.attr("transform", "translate(" + 0 + "," + height + ")");
 		this.append("g")
 			.call(params.gridlines.y)
 			.classed("gridline y", true)
@@ -87,12 +86,11 @@ function drawAxis(params){
 		this.append("g")
 			.append("text")
 			.classed("chart-header", true)
-			.text("")
+			.text("Mouse over bubble! ")
 			.attr("transform", "translate(0," + -24 + ")")
 		initialize = 0;
 	}
 }
-
 function plot(params){
 	var self = this;
 	//Get each of the donut types
@@ -109,7 +107,6 @@ function plot(params){
 				return d;
 			})
 			.classed("donut", true);
-
 	this.selectAll(".donut")
 		.style("fill", function(d,i){ return colorScale(i); })
 		.on("mouseover", function(d,i){
@@ -124,7 +121,6 @@ function plot(params){
 				.transition()
 				.style("opacity", 0.1);
 		});
-
 	donuts.forEach(function(donut){
 		var g = self.selectAll("g."+donut);
 		var arr = params.data.map(function(d){
@@ -147,15 +143,15 @@ function plot(params){
 			.attr("cx", function(d){ return x(d.age); })
 			.attr("cy", function(d){ return y(d.value); })
 			.on("mouseover", function(d,i){
-				var str = d.key + " Donut: ";
-				str += "Age: " + d.age + ", ";
+				var str = " Donut: "+ d.key+", ";
+				str += " Age: " + d.age + ", ";
 				str += "Responses: " + d.responses + ", ";
 				str += "Average Rating: " + d.value;
 				str += ""
 				d3.select(".chart-header").text(str);
 			})
 			.on("mouseout", function(d,i){
-				d3.select(".chart-header").text("");
+				d3.select(".chart-header").text("Mouse over bubble!");
 			});
 		//Remove any unbound elements
 		g.selectAll(".response").data(arr).exit().remove();
@@ -172,7 +168,6 @@ plot.call(chart, {
 		y: yAxis
 	}
 });
-
 </script>
 </body>
 </html>
