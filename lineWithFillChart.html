@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Learning D3</title>
+<script src="https://d3js.org/d3.v4.min.js"></script>  
+<script src='https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js'></script>
+<style>
+
+body,html{
+	margin: 0;
+	padding: 0;
+	font-size: 0.95em;
+	text-align: center;
+	border: 1px solid black;
+	font-family: Helvetica, sans-serif;
+
+}
+#chart{
+	background-color: white;
+	border: 1px solid black;
+}
+.bar{
+	fill: black;
+	shape-rendering: crispEdges;
+}
+.bar-label{
+	fill: black; 
+	text-anchor: middle;
+	font-size: 18px;
+}
+.axis path,
+.axis line{
+	visibility:hidden; 
+}
+.tick line{
+	stroke-width: 2px
+}
+
+text{
+	font-family: "Helvetica", sans-serif;
+	fill:black;
+	<!-- //fill: #81868A; -->
+}
+
+.gridline path,
+.gridline line{
+	fill: none;
+	stroke: #ccc;
+	shape-rendering: crispEdges;
+}
+
+.trendlineCSS{
+	fill:none;
+	stroke: #3873B1;
+	stroke-width: 1px;
+	<!-- stroke-dasharray: 2px; -->
+}
+.area{
+	opacity: 0.25;
+	fill: #14CCA4;
+	stroke: #ccc;
+	stroke-width: 1px
+}
+
+path.domain{
+  visibility:hidden;
+}
+
+div.tooltip{
+	position:absolute;
+	max-width:200px;
+	height:auto;
+	padding:5px;
+	background-color:white;
+	border-radius: 5px;
+	box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+	pointer-events: none;			 ///*very important */
+	font-family: sans-serif;
+	font-size: 12px;
+	}
+
+.point{
+	fill: #3873B1;
+}
+.title{
+	font-size: 18px;
+}
+.label{
+	fill: #14CCA4; 
+	}
+</style>
+
+
+</head>
+<body>
+<!--Place all DOM elements here -->
+<script>
+var data = [
+ [
+	{key: "Copay", value: 50, date: "2014/01/01" },
+	{key: "Copay", value: 58, date: "2014/01/02" },
+	{key: "Copay", value: 59, date: "2014/01/03" },
+	{key: "Copay", value: 56, date: "2014/01/04" },
+	{key: "Copay", value: 57, date: "2014/01/05" },
+	{key: "Copay", value: 55, date: "2014/01/06" },
+	{key: "Copay", value: 56, date: "2014/01/07" },
+	{key: "Copay", value: 52, date: "2014/01/08" },
+	{key: "Copay", value: 54, date: "2014/01/09" },
+	{key: "Copay", value: 57, date: "2014/01/10" },
+	{key: "Copay", value: 56, date: "2014/01/11" },
+	{key: "Copay", value: 59, date: "2014/01/12" },
+	{key: "Copay", value: 56, date: "2014/01/13" },
+	{key: "Copay", value: 52, date: "2014/01/14" },
+	{key: "Copay", value: 48, date: "2014/01/15" },
+	{key: "Copay", value: 47, date: "2014/01/16" },
+	<!-- {key: "Copay", value: 48, date: "2014/01/17" }, -->
+	<!-- {key: "Copay", value: 45, date: "2014/01/18" }, -->
+	<!-- {key: "Copay", value: 43, date: "2014/01/19" }, -->
+	<!-- {key: "Copay", value: 41, date: "2014/01/20" }, -->
+	<!-- {key: "Copay", value: 37, date: "2014/01/21" }, -->
+	<!-- {key: "Copay", value: 36, date: "2014/01/22" }, -->
+	<!-- {key: "Copay", value: 39, date: "2014/01/23" }, -->
+	<!-- {key: "Copay", value: 41, date: "2014/01/24" }, -->
+	<!-- {key: "Copay", value: 42, date: "2014/01/25" }, -->
+	<!-- {key: "Copay", value: 40, date: "2014/01/26" }, -->
+	<!-- {key: "Copay", value: 43, date: "2014/01/27" }, -->
+	<!-- {key: "Copay", value: 41, date: "2014/01/28" }, -->
+	<!-- {key: "Copay", value: 39, date: "2014/01/29" }, -->
+	<!-- {key: "Copay", value: 40, date: "2014/01/30" }, -->
+	<!-- {key: "Copay", value: 39, date: "2014/01/31" } -->
+],
+[	
+	{key: "outOfPocketCost", value: 10, date: "2014/01/01" },
+	{key: "outOfPocketCost", value: 12, date: "2014/01/02" },
+	{key: "outOfPocketCost", value: 13, date: "2014/01/03" },
+	{key: "outOfPocketCost", value: 14, date: "2014/01/04" },
+	{key: "outOfPocketCost", value: 17, date: "2014/01/05" },
+	{key: "outOfPocketCost", value: 12, date: "2014/01/06" },
+	{key: "outOfPocketCost", value: 12, date: "2014/01/07" },
+	{key: "outOfPocketCost", value: 15, date: "2014/01/08" },
+	{key: "outOfPocketCost", value: 20, date: "2014/01/09" },
+	{key: "outOfPocketCost", value: 21, date: "2014/01/10" },
+	{key: "outOfPocketCost", value: 22, date: "2014/01/11" },
+	{key: "outOfPocketCost", value: 25, date: "2014/01/12" },
+	{key: "outOfPocketCost", value: 28, date: "2014/01/13" },
+	{key: "outOfPocketCost", value: 26, date: "2014/01/14" },
+	{key: "outOfPocketCost", value: 25, date: "2014/01/15" },
+	{key: "outOfPocketCost", value: 22, date: "2014/01/16" },
+	<!-- {key: "outOfPocketCost", value: 20, date: "2014/01/17" }, -->
+	<!-- {key: "outOfPocketCost", value: 17, date: "2014/01/18" }, -->
+	<!-- {key: "outOfPocketCost", value: 14, date: "2014/01/19" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/20" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/21" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/22" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/23" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/24" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/25" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/26" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/27" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/28" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/29" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/30" }, -->
+	<!-- {key: "outOfPocketCost", value: 10, date: "2014/01/31" } -->
+]];
+var w = 600;
+var h = 350;
+var margin = {
+	top: 58,
+	bottom: 100,
+	left: 160,
+	right: 40
+};
+var width = w - margin.left - margin.right;
+var height = h - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+			.attr("id", "chart")
+			.attr("width", w)
+			.attr("height", h);
+			
+var chart = svg.append("g")
+			.classed("display", true)
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+			
+			
+var dateParser = d3.timeParse("%Y/%m/%d");
+
+var x = d3.scaleTime()
+			.domain(d3.extent(data[0], function(d){			
+					var date = dateParser(d.date);
+					return date;
+			})).range([0, width])
+			
+
+var y = d3.scaleLinear()
+			.domain([0, d3.max(data[0], function(d){
+				return d.value;
+			})]).range([height, 0]);
+
+var xAxis = d3.axisBottom(x)
+				.ticks(d3.timeDay.every(7))
+				.tickFormat(d3.timeFormat("%b %d"));
+
+var yAxis = d3.axisLeft(y).ticks(5);
+
+var yGridlines = d3.axisLeft(y)
+					.tickSize(-width, 0,0)
+					.ticks(5)
+					.tickFormat("");
+						
+var xGridlines = d3.axisBottom(x)
+					.tickSize(-height)
+					.ticks(d3.timeDay.every(7))
+					.tickPadding(0)
+					.tickFormat("");
+					
+					
+
+var line = d3.line()
+			.x(function(d){
+				var date = dateParser(d.date);
+				return x(date);})
+			.y(function(d){
+				return y(d.value)})
+			.curve(d3.curveMonotoneX)
+			
+var area = d3.area()
+			.x(function(d){
+					var date = dateParser(d.date);
+					console.log(d)
+					return x(date);
+				})
+
+			.y0(function(d){
+				return y(d.var2);
+			})
+			.y1(function(d){
+				return y(d.var1);
+			})
+			.curve(d3.curveMonotoneX)
+
+function createChart(params){
+
+	this.append("g") //horizontal grid
+		.call(params.gridlines.yGrid)
+			.classed("y gridline", true)
+			.attr("transform","translate(0,0)")
+				
+	this.append("g")
+		.attr("transform","translate(0,"+height+")" )
+		.call(params.gridlines.xGrid)
+			.classed("x gridline", true)			
+
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("title", true)
+		.style("text-anchor", "middle")
+		.attr("transform", "translate(" + width/2 +","+ -(margin.top/4) +")")
+		.text("Cost Per Dispense");	
+
+	this.append("g")
+		.classed("x axis", true)
+		.attr("transform","translate(0,"+ height+ ")")
+		.call(params.axis.x);
+		
+	this.append("g")
+		.classed("y axis", true)
+		.attr("style","transform:translate(0,0)")
+		.call(params.axis.y);
+		
+	this.append("text")
+			.attr("class", "label")
+			.attr("x",0)
+			.attr("y",0)
+			.style("text-anchor", "middle")
+			.attr("transform", "translate(" + (-(margin.left/2)-10) +","+ y((params.data[0].var1 + params.data[0].var2)/2)  +")")
+			.text("Patient Assistance");
+
+	this.append("text")
+			.attr("class", "label")
+			.attr("x",0)
+			.attr("y",0)
+			.style("text-anchor", "middle")
+			.style("fill", "#6799CF")
+			.attr("transform", "translate(" + (-(margin.left/2)-10) +","+ y(params.data[0].var1) +")")
+			.text("Copay");		
+	
+	this.append("text")
+			.attr("class", "label")
+			.attr("x",0)
+			.attr("y",0)
+			.style("text-anchor", "middle")
+			.style("fill", "#6799CF")
+			.attr("transform", "translate(" + (-(margin.left/2)-10) +","+ y(params.data[0].var2) +")")
+			.text("Out of Pocket Cost");		
+
+
+		
+	this.selectAll(".area")
+		.data([params.data])
+		.enter()
+			.append("path") //path
+			.classed("area",true)
+			
+	this.selectAll(".area")
+		.attr("d", area);	
+		
+	this.selectAll(".area")
+		.data(params.data)
+		.exit()
+		.remove();
+		
+		console.log("end of chart creation")
+}
+			
+			
+function plot(params){
+var tooltip = d3.select("body").append("div")
+					.attr("class", "tooltip")
+					.style("opacity", 0);	
+
+	<!-- this.selectAll(".area") -->
+		<!-- .data([params.data]) -->
+		<!-- .enter() -->
+			<!-- .append("path") -->
+			<!-- .classed("area",true);					 -->
+	
+	//enter()	
+	this.selectAll(".trendline"+ params.category )
+		.data([params.data])
+		.enter()
+			.append("path")
+			.classed("trendline"+ params.category,true)
+			.classed("trendlineCSS", true);
+			//.attr("d", line);
+	
+	this.selectAll(".point"+ params.category)
+		.data(params.data)
+		.enter()
+			.append("circle")
+			.classed("point" + params.category, true)
+			.attr("r", 3)
+			.style("fill", "#3873B1");
+			
+	this.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777").attr("style", "stroke-width: 1px;")			
+		
+	//update()
+
+	this.selectAll(".trendline"+ params.category)
+		.classed("trendline"+ params.category, true)
+		.attr("d", function(d){
+			//console.log(params.category)
+			return line(d);
+		})
+		
+	<!-- this.selectAll(".area") -->
+		<!-- .attr("d", function(d){ -->
+			<!-- return area(d); -->
+		<!-- }) -->
+	
+	this.selectAll(".point" + params.category)
+		.attr("cx", function(d){
+			var date = dateParser(d.date);
+			return x(date);
+		})
+		.attr("cy", function(d){
+			return y(d.value);
+		})
+		.on("mouseover", function(d){
+			tooltip.transition()
+				.duration(500)
+				.style("opacity", .85)	
+				if(d.key == "outOfPocketCost"){
+				d.key = "Out of Pocket Cost"}
+				
+				tooltip.html("<strong>"+d.key+ " $" + d.value + "K</strong>")
+					.style("left", (d3.event.pageX) + "px")
+					.style("top", (d3.event.pageY - 28) + "px")
+		 })
+		.on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);}); 
+
+					
+	<!-- this.selectAll(".area") -->
+		<!-- .attr("d", function(d){		 -->
+			<!-- return area(d); -->
+		<!-- })		 -->
+	
+	//exit()
+	
+	<!-- this.selectAll(".area") -->
+		<!-- .data([params.data]) -->
+		<!-- .exit() -->
+		<!-- .remove(); -->
+	
+	this.selectAll(".trendline")
+		.data([params.data])
+		.exit()
+		.remove();
+		
+	this.selectAll(".point")
+		.data(params.data)
+		.exit()
+		.remove();			
+}
+
+<!-- function createArea(params){	 -->
+	<!-- console.log(params.data) -->
+
+	<!-- this.selectAll(".area") -->
+		<!-- .data([params.data]) -->
+		<!-- .enter() -->
+			<!-- .append("path") -->
+			<!-- .classed("area",true); -->
+			
+	<!-- this.selectAll(".area") -->
+		<!-- .attr("d", function(d){		 -->
+			<!-- return area(d); -->
+		<!-- }) -->
+		
+	<!-- this.selectAll(".area") -->
+		<!-- .data([params.values]) -->
+		<!-- .exit() -->
+		<!-- .remove(); -->
+<!-- } -->
+
+var dataNest = d3.nest().key(function(d){
+			return d.key;
+		}).entries(data); 
+
+		
+const uniqueDates = [...new Set(data.map(pt => pt.date))];
+
+var combined = {};
+for(var i in uniqueDates){
+	combined[i] = {dp1: '', dp2: '', date: uniqueDates[i]}	
+	for(var dp in data){
+		if(data[dp].date == uniqueDates[i]){				
+				if(combined[i].dp1 == ''){
+					combined[i].dp1 = data[dp].value
+				}else{
+					combined[i].dp2 = data[dp].value;	
+				}
+			}		
+		}
+}
+
+var merged = [];
+for(i = 0; i < data[0].length; i++){
+	merged.push({
+		var1: data[0][i].value,
+		var2: data[1][i].value,
+		date: data[0][i].date
+	})
+}
+
+createChart.call(chart, {
+			axis: {
+				x: xAxis,
+				y: yAxis
+			},
+			data:  merged,
+			gridlines: {
+			yGrid: yGridlines,
+			xGrid: xGridlines,
+			} 
+		})
+		
+data.forEach(function(d, i){
+		plot.call(chart, {
+			category: d[0].key,
+			data: d,			
+		}
+	)})	
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -187,24 +187,24 @@ var line = d3.line()
 			.curve(d3.curveMonotoneX)
 				
 	//shade in bottom of graph
-<!-- var area = d3.area() -->  
-			<!-- .x(function(d){ -->
-				<!-- var date = dateParser(d.date); -->
-				<!-- return x(date);}) -->
-			<!-- .y0(-height) -->
-			<!-- .y1(function(d){ -->
-				<!-- return y(d.value); -->
-			<!-- }).curve(d3.curveMonotoneX) -->
-
-	//shade in top of graph 
-var area = d3.area()
+var area = d3.area()  
 			.x(function(d){
 				var date = dateParser(d.date);
 				return x(date);})
-			.y0(0)
+			.y0(height)
 			.y1(function(d){
 				return y(d.value);
 			}).curve(d3.curveMonotoneX)
+
+	//shade in top of graph 
+<!-- var area = d3.area() -->
+			<!-- .x(function(d){ -->
+				<!-- var date = dateParser(d.date); -->
+				<!-- return x(date);}) -->
+			<!-- .y0(20) -->
+			<!-- .y1(function(d){ -->
+				<!-- return y(d.value); -->
+			<!-- }).curve(d3.curveMonotoneX) -->
 
 
 
@@ -245,7 +245,7 @@ function plot(params){
 
 
 	//enter()
-	
+	console.log(params.data)
 	this.selectAll(".area")
 		.data([params.data])
 		.enter()
