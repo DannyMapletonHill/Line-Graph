@@ -8,18 +8,14 @@
 <style>
 
 body,html{
-	margin: 0;
-	padding: 0;
+	<!-- margin: 0; -->
+	<!-- padding: 0; -->
 	font-size: 0.95em;
 	text-align: center;
-	border: 1px solid black;
 	font-family: Helvetica, sans-serif;
 
 }
-#chart{
-	<!-- background-color: #F5F2EB; -->
-	border: 1px solid black;
-}
+
 .bar{
 	fill: black;
 	shape-rendering: crispEdges;
@@ -35,12 +31,9 @@ body,html{
 }
 .tick line{
 	stroke-width: 2px;
-	fill: purple
 }
 
 text{
-	display:inline;
-	padding:5px;
 	font-family: "Helvetica", sans-serif;
 	fill: #81868A;
 }
@@ -49,25 +42,16 @@ text{
 .gridline line{
 	fill: none;
 	stroke: #E6E6E6;
-	shape-rendering: crispEdges;
-	
 }
 
 .trendline{
 	fill:none;
 	stroke: #3873B1;
 	stroke-width: 2px;
-	<!-- stroke-dasharray: 2px; -->
-}
-.area{
-	opacity: 0.25;
-	fill: #C1E6C5;
-	stroke: #ccc;
-	stroke-width: 1px
 }
 
 path.domain{
-  visibility:hidden;
+  <!-- visibility:hidden; removes bottom axis line --> 
 }
 
 div.tooltip{
@@ -81,24 +65,27 @@ div.tooltip{
 	pointer-events: none;			 ///*very important */
 	font-family: sans-serif;
 	font-size: 12px;
-	}
+}
 
 .point{
 	fill: #3873B1;	
 }
 .title{
+	fill:black;
 	font-size: 18px;
-		background-color: purple;	
+		<!-- background-color: purple;	 -->
 
 }
 
 .label{
+	font-size: 12px;
+
 	fill: red;
 }
 
 .beginEndLabel{
 	font-size: 12px;
-	background-color: #00ff00!;
+	<!-- background-color: #00ff00!; -->
 }
 
 .dateLabel{
@@ -119,39 +106,49 @@ var data = {
 		{date: "2014/04/20"}
 	],
 	"missedDays": [
-		{  date: "2014/01/01" },
-		{  date: "2014/01/02" },
-		{  date: "2014/01/03" },
-		{  date: "2014/01/04" },
-		{  date: "2014/01/05" },
-		{  date: "2014/01/06" },
-		{  date: "2014/01/07" },
-		{  date: "2014/01/08" },
-		{  date: "2014/01/09" },
-		{  date: "2014/01/10" },
-		{  date: "2014/01/11" },
-		{  date: "2014/01/12" },
-		{  date: "2014/01/13" },
-		{  date: "2014/01/14" },
-		{  date: "2014/01/15" },
-		{  date: "2014/01/16" },
-		{  date: "2014/01/17" },
-		{  date: "2014/01/18" },
-		{  date: "2014/01/19" },
-		{  date: "2014/01/20" },
-		{  date: "2014/01/21" },
-		{  date: "2014/01/22" },
-		{  date: "2014/01/23" },
-		{  date: "2014/01/24" },
-		{  date: "2014/01/25" },
-		{  date: "2014/01/26" },
-		{  date: "2014/01/27" },
-		{  date: "2014/01/28" },
-		{  date: "2014/01/29" },
-		{  date: "2014/01/30" },
-		{  date: "2014/01/31" },
-		{  date: "2014/02/26" }
-	]		
+					
+					[
+						{  date: "2014/01/01" },
+						{  date: "2014/01/02" },
+						{  date: "2014/01/03" },
+						{  date: "2014/01/04" },
+						{  date: "2014/01/05" },
+						{  date: "2014/01/06" },
+						{  date: "2014/01/07" },
+						{  date: "2014/01/08" },
+						{  date: "2014/01/09" },
+						{  date: "2014/01/10" },
+						{  date: "2014/01/11" },
+						{  date: "2014/01/12" },
+						{  date: "2014/01/13" },
+						{  date: "2014/01/14" },
+						{  date: "2014/01/15" },
+						{  date: "2014/01/16" },
+						{  date: "2014/01/17" },
+						{  date: "2014/01/18" },
+						{  date: "2014/01/19" },
+						{  date: "2014/01/20" },
+						{  date: "2014/01/21" },
+						{  date: "2014/01/22" },
+						{  date: "2014/01/23" },
+						{  date: "2014/01/24" },
+						{  date: "2014/01/25" },
+						{  date: "2014/01/26" },
+						{  date: "2014/01/27" },
+						{  date: "2014/01/28" },
+						{  date: "2014/01/29" },
+						{  date: "2014/01/30" },
+						{  date: "2014/01/31" },
+						{  date: "2014/02/26" }
+					],
+					[				
+						{  date: "2013/10/07" },
+						{  date: "2013/10/08" },
+						{  date: "2013/10/09" },
+						{  date: "2013/10/10" },
+						{  date: "2013/10/15" }		
+					]
+				]	
 };
 
 var dateParser = d3.timeParse("%Y/%m/%d");
@@ -159,11 +156,12 @@ var dateParser = d3.timeParse("%Y/%m/%d");
 var date_diff_indays = function(date1, date2) {
 	dt1 = new Date(date1);
 	dt2 = new Date(date2);
+	
 	return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
 }
 
 var w = 800;
-var h = 200;
+var h = 250;
 var margin = {
 	top: 58,
 	bottom: 100,
@@ -212,21 +210,14 @@ var line = d3.line()
 			.x(function(d){
 				var date = dateParser(d.date);
 				return x(date);})
-			.y(function(d){
-				return 12});
+			.y(height/2);
 				
 		
 function plot(params){
-	console.log(params.data)
-	
+
 	var tooltip = d3.select("body").append("div")
 					.attr("class", "tooltip")
 					.style("opacity", 0);			
-
-	<!-- this.append("g") //horizontal grid -->
-		<!-- .call(params.gridlines.yGrid) -->
-			<!-- .classed("y gridline", true) -->
-			<!-- .attr("transform","translate(0,0)") -->
 				
 	this.append("g")
 		.attr("transform","translate(0,"+height+")" )
@@ -246,7 +237,7 @@ function plot(params){
 		.attr("y",0)
 		.classed("beginEndLabel dateLabel", true)			
 		.style("text-anchor", "end")
-		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "start") +"," + 12 + ")")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 7, "start") +"," + height/2 + ")")
 		.text(d3.min(params.data.treatmentDates, function(d){return d.date}));	
 	
 	this.append("text")
@@ -254,100 +245,76 @@ function plot(params){
 		.attr("y",0)
 		.classed("beginEndLabel", true)
 		.style("text-anchor", "end")
-		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "start") +"," + 35 + ")")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "start") +"," + ((height/3)*2) + ")")
 		.text("Start");	
+	
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("beginEndLabel dateLabel", true)			
+		.style("text-anchor", "start")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 7, "end") +"," + height/2 + ")")
+		.text(d3.max(params.data.treatmentDates, function(d){return d.date}));	
+	
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("beginEndLabel", true)
+		.style("text-anchor", "start")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "end") +"," + ((height/3)*2) + ")")
+		.text("Discontinued");	
 
 	this.append("g")
 		.classed("x axis", true)
 		.attr("transform","translate(0,"+ height+ ")")
 		.call(params.axis.x);
 		
-	this.append("text")
-		.attr("x",0)
-		.attr("y",0)
-		.classed("label", true)
-		.style("text-anchor", "start")
-		.attr("transform", "translate(" + 
-				getDatefromStartOrEnd(params.data.missedDays, 3, "end")
-			 + "," + 30 + ")")
-		.text(getNumberOfDaysBetweenDates(params.data.missedDays) +" days");	
-		
-	//enter()
+	//trendline
 	this.selectAll(".trendline")
 		.data([params.data.treatmentDates])
 		.enter()
 			.append("path")
 			.classed("trendline",true)
 			.attr("d", line);
+			
+		
+	this.selectAll(".trendline")
+		.data([params.data.treatmentDates])
+		.exit()
+		.remove();
+			
 				
 	this.selectAll(".backgroundPoint")
 		.data(params.data.treatmentDates)
 		.enter()
 			.append("circle")
 			.classed("backgroundPoint", true)
-			.attr("r", 7);
+			.attr("r", 8);
 			
+	this.selectAll(".backgroundPoint")
+		.attr("cx", function(d){
+			var date = dateParser(d.date);
+			return x(date);
+		})
+		.attr("cy",height/2)
+		.style("fill", "white");
 			
+	//points		
 	this.selectAll(".point")
 		.data(params.data.treatmentDates)
 		.enter()
 			.append("circle")
 			.classed("point", true)
-			.attr("r", 5);
-						
-	this.selectAll(".backgroundBar")
-			.data(params.data.missedDays)
-			.enter()
-				.append("rect")
-				.attr("class", "backgroundBar")
-				.attr("x", x(dateParser(d3.min(params.data.missedDays, function(d){
-				return d.date;
-			})))-1)
-				.attr("y",5)
-				.attr("width", (date_diff_indays( 
-					d3.min(params.data.missedDays, function(d){return d.date}), 
-					d3.max(params.data.missedDays, function(d) {return d.date} )
-				)+2))						
-				.attr("height", 20)				
-				.style("fill", "white");
-
-	this.selectAll(".bar")
-			.data(params.data.missedDays)
-			.enter()
-				.append("rect")
-				.attr("class", "bar")
-				.attr("x", x(dateParser(d3.min(params.data.missedDays, function(d){
-				return d.date;
-			}))))
-				.attr("y",6)
-				.attr("width", (
-				x(dateParser(d3.max(params.data.missedDays, function(d){
-				return d.date;
-			})))-
-				x(dateParser(d3.min(params.data.missedDays, function(d){
-				return d.date;
-			})))))						
-				.attr("height", 18)				
-				.style("fill", "red");
-			
-	this.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777").attr("style", "stroke-width: 1px;")			
-
-	//update()
-	
-	function toDateTime(secs) {
-		var t = new Date(1970, 0, 1); // Epoch
-		t.setSeconds(secs);
-		return t;
-	}
+			.attr("r", 6);
 	
 	this.selectAll(".point")
 		.attr("cx", function(d){
-			console.log(d.date)
 			var date = dateParser(d.date);
 			return x(date);
 		})
-		.attr("cy",12)
-			.on("mouseover", function(d){
+		.attr("cy",height/2)
+		.on("mouseover", function(d){
+			console.log(d) ;
 			tooltip.transition()
 				.duration(500)
 				.style("opacity", .85)				
@@ -356,57 +323,69 @@ function plot(params){
 					.style("top", (d3.event.pageY - 28) + "px")
 		 })
 		.on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);}); 
-
-		
-	this.selectAll(".backgroundPoint")
-		.attr("cx", function(d){
-			var date = dateParser(d.date);
-			return x(date);
-		})
-		.attr("cy",12)
-		.style("fill", "white");
-		
-	//exit()
-	
-	this.selectAll(".trendline")
-		.data([params.data.treatmentDates])
-		.exit()
-		.remove();
-		
+			
 	this.selectAll(".point")
-		.data(params.data.missedDays)
+		.data(params.data.treatmentDates)  // sets datapoint when done loading so .mouseover works with treatmentdates data
 		.exit()
 		.remove();	
-		
-	
-	function getDatefromStartOrEnd(dataSet, number, direction = "start"){
-		if(direction == "end"){
-			return d3.max(dataSet, function(d) 
-				{
-					var date = dateParser(d.date);
-					var day = date.getDate();
-					var month = date.getMonth();
-					var year = date.getFullYear();
-					var newDate = new Date(year, month, day+number);
-						console.log(newDate)
-					return x(newDate);
-				})
-		}
-		if(direction =="start") {
-			console.log("yoyo")
+					
+	//missed days
+	for(i = 0; i< params.data.missedDays.length; i++){	
+		this.append("text")
+			.attr("x",0)
+			.attr("y",0)
+			.classed("label label"+i , true)
+			.style("text-anchor", "start")
+			.attr("transform", "translate(" + 
+					getDatefromStartOrEnd(params.data.missedDays[i], 3, "end")
+				 + "," + ((height/3)*2) + ")")
+			.text(getNumberOfDaysBetweenDates(params.data.missedDays[i]) +" days");	
+				console.log(params.data.missedDays[i].length)
 
-			return d3.min(dataSet, function(d) 
-				{
-					var date = dateParser(d.date);
-					var day = date.getDate();
-					var month = date.getMonth();
-					var year = date.getFullYear();
-					var newDate = new Date(year, month, day-number);
-						console.log(newDate)
-					return x(newDate);
-				})
-			}
-		}
+	
+		this.selectAll(".backgroundBar"+i)
+			.data(params.data.missedDays[i])
+			.enter()
+				.append("rect")
+				.attr("class", "backgroundBar"+i)
+				.attr("x", x(dateParser(d3.min(params.data.missedDays[i], function(d){
+				return d.date;
+			})))-1)
+				.attr("y", (height/2)- 5)
+				.attr("width", (date_diff_indays( 
+					d3.min(params.data.missedDays[i], function(d){return d.date}), 
+					d3.max(params.data.missedDays[i], function(d) {return d.date} )
+				)+2))						
+				.attr("height", 20)				
+				.style("fill", "white");
+		
+		this.selectAll(".bar")
+			.data(params.data.missedDays[i])
+			.enter()
+				.append("rect")
+				.attr("class", "bar"+i)
+				.attr("x", x(dateParser(d3.min(params.data.missedDays[i], function(d){
+				return d.date;
+			}))))
+				.attr("y",(height/2)-6)
+				.attr("width", (
+				x(dateParser(d3.max(params.data.missedDays[i], function(d){
+				return d.date;
+			})))-
+				x(dateParser(d3.min(params.data.missedDays[i], function(d){
+				return d.date;
+			})))))						
+				.attr("height", 18)				
+				.style("fill", "red");	
+		
+		this.selectAll(".backgroundBar"+i)
+			.data([params.data.missedDays[i]])
+			.exit()
+			.remove();						
+	}
+			
+	this.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777").attr("style", "stroke-width: 1px;")			
+
 }
 
 plot.call(chart,{ // first arg is "this" obj
@@ -421,20 +400,41 @@ plot.call(chart,{ // first arg is "this" obj
 		}
 	});
 
-getNumberOfDaysBetweenDates(data.missedDays);
-
 function getNumberOfDaysBetweenDates(dates){
-	var maxDate = d3.max(data.missedDays, function(d) 
+	var maxDate = d3.max(dates, function(d) 
 		 { return d.date})
 		 console.log(maxDate);
-	var minDate =  d3.min(data.missedDays, function(d) 
+	var minDate =  d3.min(dates, function(d) 
 		 { return d.date});
 		console.log(minDate);
 		
 	return date_diff_indays(minDate, maxDate);		
 }
-
-
+	
+	function getDatefromStartOrEnd(dataSet, number, direction = "start"){
+		if(direction == "end"){
+			return d3.max(dataSet, function(d) 
+				{
+					var date = dateParser(d.date);
+					var day = date.getDate();
+					var month = date.getMonth();
+					var year = date.getFullYear();
+					var newDate = new Date(year, month, day+number);
+					return x(newDate);
+				})
+		}
+		if(direction =="start") {
+			return d3.min(dataSet, function(d) 
+				{
+					var date = dateParser(d.date);
+					var day = date.getDate();
+					var month = date.getMonth();
+					var year = date.getFullYear();
+					var newDate = new Date(year, month, day-number);
+					return x(newDate);
+				})
+			}
+		}
 
 </script>
 </body>
