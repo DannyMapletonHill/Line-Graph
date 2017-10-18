@@ -34,10 +34,13 @@ body,html{
 	visibility:hidden; 
 }
 .tick line{
-	stroke-width: 2px
+	stroke-width: 2px;
+	fill: purple
 }
 
 text{
+	display:inline;
+	padding:5px;
 	font-family: "Helvetica", sans-serif;
 	fill: #81868A;
 }
@@ -45,14 +48,15 @@ text{
 .gridline path,
 .gridline line{
 	fill: none;
-	stroke: #ccc;
+	stroke: #E6E6E6;
 	shape-rendering: crispEdges;
+	
 }
 
 .trendline{
 	fill:none;
 	stroke: #3873B1;
-	stroke-width: 1px;
+	stroke-width: 2px;
 	<!-- stroke-dasharray: 2px; -->
 }
 .area{
@@ -80,14 +84,26 @@ div.tooltip{
 	}
 
 .point{
-	fill: #3873B1;
+	fill: #3873B1;	
 }
 .title{
 	font-size: 18px;
+		background-color: purple;	
+
 }
 
 .label{
 	fill: red;
+}
+
+.beginEndLabel{
+	font-size: 12px;
+	background-color: #00ff00!;
+}
+
+.dateLabel{
+	font-size:12;
+	fill: black;
 }
 
 </style>
@@ -97,44 +113,57 @@ div.tooltip{
 <body>
 <!--Place all DOM elements here -->
 <script>
-var data = [
-	{key: "Jelly", value: 60, date: "2014/01/01" },
-	{key: "Jelly", value: 58, date: "2014/01/02" },
-	{key: "Jelly", value: 59, date: "2014/01/03" },
-	{key: "Jelly", value: 56, date: "2014/01/04" },
-	{key: "Jelly", value: 57, date: "2014/01/05" },
-	{key: "Jelly", value: 55, date: "2014/01/06" },
-	{key: "Jelly", value: 56, date: "2014/01/07" },
-	{key: "Jelly", value: 52, date: "2014/01/08" },
-	{key: "Jelly", value: 54, date: "2014/01/09" },
-	{key: "Jelly", value: 57, date: "2014/01/10" },
-	{key: "Jelly", value: 56, date: "2014/01/11" },
-	{key: "Jelly", value: 59, date: "2014/01/12" },
-	{key: "Jelly", value: 56, date: "2014/01/13" },
-	{key: "Jelly", value: 52, date: "2014/01/14" },
-	{key: "Jelly", value: 48, date: "2014/01/15" },
-	{key: "Jelly", value: 47, date: "2014/01/16" },
-	{key: "Jelly", value: 48, date: "2014/01/17" },
-	{key: "Jelly", value: 45, date: "2014/01/18" },
-	{key: "Jelly", value: 43, date: "2014/01/19" },
-	{key: "Jelly", value: 41, date: "2014/01/20" },
-	{key: "Jelly", value: 37, date: "2014/01/21" },
-	{key: "Jelly", value: 36, date: "2014/01/22" },
-	{key: "Jelly", value: 39, date: "2014/01/23" },
-	{key: "Jelly", value: 41, date: "2014/01/24" },
-	{key: "Jelly", value: 42, date: "2014/01/25" },
-	{key: "Jelly", value: 40, date: "2014/01/26" },
-	{key: "Jelly", value: 43, date: "2014/01/27" },
-	{key: "Jelly", value: 41, date: "2014/01/28" },
-	{key: "Jelly", value: 39, date: "2014/01/29" },
-	{key: "Jelly", value: 40, date: "2014/01/30" },
-	{key: "Jelly", value: 39, date: "2014/01/31" },
-	{key: "Jelly", value: 39, date: "2014/02/26" },
+var data = {
+	"treatmentDates" : [	
+		{date: "2013/08/20"},
+		{date: "2014/04/20"}
+	],
+	"missedDays": [
+		{  date: "2014/01/01" },
+		{  date: "2014/01/02" },
+		{  date: "2014/01/03" },
+		{  date: "2014/01/04" },
+		{  date: "2014/01/05" },
+		{  date: "2014/01/06" },
+		{  date: "2014/01/07" },
+		{  date: "2014/01/08" },
+		{  date: "2014/01/09" },
+		{  date: "2014/01/10" },
+		{  date: "2014/01/11" },
+		{  date: "2014/01/12" },
+		{  date: "2014/01/13" },
+		{  date: "2014/01/14" },
+		{  date: "2014/01/15" },
+		{  date: "2014/01/16" },
+		{  date: "2014/01/17" },
+		{  date: "2014/01/18" },
+		{  date: "2014/01/19" },
+		{  date: "2014/01/20" },
+		{  date: "2014/01/21" },
+		{  date: "2014/01/22" },
+		{  date: "2014/01/23" },
+		{  date: "2014/01/24" },
+		{  date: "2014/01/25" },
+		{  date: "2014/01/26" },
+		{  date: "2014/01/27" },
+		{  date: "2014/01/28" },
+		{  date: "2014/01/29" },
+		{  date: "2014/01/30" },
+		{  date: "2014/01/31" },
+		{  date: "2014/02/26" }
+	]		
+};
 
-	
-];
+var dateParser = d3.timeParse("%Y/%m/%d");
+
+var date_diff_indays = function(date1, date2) {
+	dt1 = new Date(date1);
+	dt2 = new Date(date2);
+	return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
+}
+
 var w = 800;
-var h = 300;
+var h = 200;
 var margin = {
 	top: 58,
 	bottom: 100,
@@ -152,14 +181,6 @@ var svg = d3.select("body").append("svg")
 var chart = svg.append("g")
 			.classed("display", true)
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-			
-var dateParser = d3.timeParse("%Y/%m/%d");
-
-var date_diff_indays = function(date1, date2) {
-dt1 = new Date(date1);
-dt2 = new Date(date2);
-return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
-}
 
 var x = d3.scaleTime()
 			.domain([dateParser("2013/06/31"), dateParser("2014/06/31")])
@@ -192,12 +213,12 @@ var line = d3.line()
 				var date = dateParser(d.date);
 				return x(date);})
 			.y(function(d){
-				return 10})
-			.curve(d3.curveMonotoneX)
+				return 12});
 				
 		
 function plot(params){
-
+	console.log(params.data)
+	
 	var tooltip = d3.select("body").append("div")
 					.attr("class", "tooltip")
 					.style("opacity", 0);			
@@ -219,6 +240,22 @@ function plot(params){
 		.style("text-anchor", "middle")
 		.attr("transform", "translate(" + width/2 +","+ -(margin.top/4) +")")
 		.text("Days without Drug in the Last Year");	
+		
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("beginEndLabel dateLabel", true)			
+		.style("text-anchor", "end")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "start") +"," + 12 + ")")
+		.text(d3.min(params.data.treatmentDates, function(d){return d.date}));	
+	
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("beginEndLabel", true)
+		.style("text-anchor", "end")
+		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "start") +"," + 35 + ")")
+		.text("Start");	
 
 	this.append("g")
 		.classed("x axis", true)
@@ -226,131 +263,178 @@ function plot(params){
 		.call(params.axis.x);
 		
 	this.append("text")
-		<!-- .attr("x", x(dateParser(d3.min(data, function(d){ -->
-			<!-- return d.date; -->
-			<!-- })))) -->
 		.attr("x",0)
 		.attr("y",0)
 		.classed("label", true)
-		.style("text-anchor", "end")
-		.attr("transform", "translate(" + (
-				 getMaxDatePlusDays(3)
-			) + "," + 30 + ")")
-		.text(data.length+" days");	
-
+		.style("text-anchor", "start")
+		.attr("transform", "translate(" + 
+				getDatefromStartOrEnd(params.data.missedDays, 3, "end")
+			 + "," + 30 + ")")
+		.text(getNumberOfDaysBetweenDates(params.data.missedDays) +" days");	
 		
 	//enter()
 	this.selectAll(".trendline")
-		.data([params.data])
+		.data([params.data.treatmentDates])
 		.enter()
 			.append("path")
-			.classed("trendline",true);
-			//.attr("d", line);
-	
-	<!-- this.selectAll(".point") -->
-		<!-- .data(params.data) -->
-		<!-- .enter() -->
-			<!-- .append("circle") -->
-			<!-- .classed("point", true) -->
-			<!-- .attr("r", 3); -->
+			.classed("trendline",true)
+			.attr("d", line);
+				
+	this.selectAll(".backgroundPoint")
+		.data(params.data.treatmentDates)
+		.enter()
+			.append("circle")
+			.classed("backgroundPoint", true)
+			.attr("r", 7);
 			
 			
+	this.selectAll(".point")
+		.data(params.data.treatmentDates)
+		.enter()
+			.append("circle")
+			.classed("point", true)
+			.attr("r", 5);
+						
+	this.selectAll(".backgroundBar")
+			.data(params.data.missedDays)
+			.enter()
+				.append("rect")
+				.attr("class", "backgroundBar")
+				.attr("x", x(dateParser(d3.min(params.data.missedDays, function(d){
+				return d.date;
+			})))-1)
+				.attr("y",5)
+				.attr("width", (date_diff_indays( 
+					d3.min(params.data.missedDays, function(d){return d.date}), 
+					d3.max(params.data.missedDays, function(d) {return d.date} )
+				)+2))						
+				.attr("height", 20)				
+				.style("fill", "white");
+
 	this.selectAll(".bar")
-			.data(params.data)
+			.data(params.data.missedDays)
 			.enter()
 				.append("rect")
 				.attr("class", "bar")
-				.attr("x", x(dateParser(d3.min(data, function(d){
+				.attr("x", x(dateParser(d3.min(params.data.missedDays, function(d){
 				return d.date;
 			}))))
-				.attr("y",10)
-				.attr("width", (date_diff_indays( 
-					d3.min(data, function(d){return d.date}), 
-					d3.max(data, function(d) {return d.date} )
-				)))						
-				.attr("height", 18
-					<!-- function(d,i){  -->
-					<!-- return y.bandwidth() -1;} -->
-					
-					)
-				.attr("opacity", function(d,i){
-					return (1 - (i/data.length)) +.1;
-				})
+				.attr("y",6)
+				.attr("width", (
+				x(dateParser(d3.max(params.data.missedDays, function(d){
+				return d.date;
+			})))-
+				x(dateParser(d3.min(params.data.missedDays, function(d){
+				return d.date;
+			})))))						
+				.attr("height", 18)				
 				.style("fill", "red");
 			
 	this.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777").attr("style", "stroke-width: 1px;")			
 
-	
 	//update()
+	
+	function toDateTime(secs) {
+		var t = new Date(1970, 0, 1); // Epoch
+		t.setSeconds(secs);
+		return t;
+	}
+	
+	this.selectAll(".point")
+		.attr("cx", function(d){
+			console.log(d.date)
+			var date = dateParser(d.date);
+			return x(date);
+		})
+		.attr("cy",12)
+			.on("mouseover", function(d){
+			tooltip.transition()
+				.duration(500)
+				.style("opacity", .85)				
+				tooltip.html("<strong>"+ d.date + "</strong>")
+					.style("left", (d3.event.pageX) + "px")
+					.style("top", (d3.event.pageY - 28) + "px")
+		 })
+		.on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);}); 
 
-	
-	<!-- this.selectAll(".trendline") -->
-		<!-- .attr("d", function(d){ -->
-			<!-- return line(d); -->
-		<!-- }) -->
-	
-	<!-- this.selectAll(".point") -->
-		<!-- .attr("cx", function(d){ -->
-			<!-- var date = dateParser(d.date); -->
-			<!-- return x(date); -->
-		<!-- }) -->
-		<!-- .attr("cy", function(d){ -->
-			<!-- return y(d.value); -->
-		<!-- }).on("mouseover", function(d){ -->
-			<!-- console.log(d3.event.pageY) -->
 		
-			<!-- tooltip.transition() -->
-				<!-- .duration(500) -->
-				<!-- .style("opacity", .85)				 -->
-				<!-- tooltip.html("<strong> Sales $" + d.value + "K</strong>") -->
-					<!-- .style("left", (d3.event.pageX) + "px") -->
-					<!-- .style("top", (d3.event.pageY - 28) + "px") -->
-		 <!-- }) -->
-		<!-- .on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);});  -->
-
-	
+	this.selectAll(".backgroundPoint")
+		.attr("cx", function(d){
+			var date = dateParser(d.date);
+			return x(date);
+		})
+		.attr("cy",12)
+		.style("fill", "white");
+		
 	//exit()
 	
 	this.selectAll(".trendline")
-		.data([params.data])
+		.data([params.data.treatmentDates])
 		.exit()
 		.remove();
 		
 	this.selectAll(".point")
-		.data(params.data)
+		.data(params.data.missedDays)
 		.exit()
-		.remove();
+		.remove();	
+		
 	
+	function getDatefromStartOrEnd(dataSet, number, direction = "start"){
+		if(direction == "end"){
+			return d3.max(dataSet, function(d) 
+				{
+					var date = dateParser(d.date);
+					var day = date.getDate();
+					var month = date.getMonth();
+					var year = date.getFullYear();
+					var newDate = new Date(year, month, day+number);
+						console.log(newDate)
+					return x(newDate);
+				})
+		}
+		if(direction =="start") {
+			console.log("yoyo")
+
+			return d3.min(dataSet, function(d) 
+				{
+					var date = dateParser(d.date);
+					var day = date.getDate();
+					var month = date.getMonth();
+					var year = date.getFullYear();
+					var newDate = new Date(year, month, day-number);
+						console.log(newDate)
+					return x(newDate);
+				})
+			}
+		}
 }
 
-plot.call(chart, { // first arg is "this" obj
+plot.call(chart,{ // first arg is "this" obj
 	data:data,
 	axis: {
 		x: xAxis,
 		y: yAxis
 	},
 	gridlines: {
-	yGrid: yGridlines,
-	xGrid: xGridlines
-	}
-	})
+		yGrid: yGridlines,
+		xGrid: xGridlines
+		}
+	});
 
-	
-function getMaxDatePlusDays(number){
-	return d3.max(data, function(d) 
-		 {
-		 var date = dateParser(d.date);
-		 var day = date.getDate();
-		var month = date.getMonth();
-		var year = date.getFullYear();
-		var newDate = new Date(year, month, day+number);
-		console.log(newDate)
-		console.log(date)
-		return x(newDate);
-		 })
-	
+getNumberOfDaysBetweenDates(data.missedDays);
 
+function getNumberOfDaysBetweenDates(dates){
+	var maxDate = d3.max(data.missedDays, function(d) 
+		 { return d.date})
+		 console.log(maxDate);
+	var minDate =  d3.min(data.missedDays, function(d) 
+		 { return d.date});
+		console.log(minDate);
+		
+	return date_diff_indays(minDate, maxDate);		
 }
+
+
 
 </script>
 </body>
