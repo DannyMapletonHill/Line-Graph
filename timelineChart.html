@@ -12,7 +12,7 @@ body,html{
 	<!-- padding: 0; -->
 	font-size: 0.95em;
 	text-align: center;
-	font-family: Helvetica, sans-serif;
+	font-family: Helvetica;
 
 }
 
@@ -34,7 +34,7 @@ body,html{
 }
 
 text{
-	font-family: "Helvetica", sans-serif;
+	font-family: "Helvetica";
 	fill: #81868A;
 }
 
@@ -79,17 +79,21 @@ div.tooltip{
 
 .label{
 	font-size: 12px;
-
 	fill: red;
 }
 
 .beginEndLabel{
-	font-size: 12px;
+	font-size: 11px;
 	<!-- background-color: #00ff00!; -->
 }
 
+.drugLabel{
+	font-size:13px;
+	fill: black;
+}
+
 .dateLabel{
-	font-size:12;
+	font-size:11px;
 	fill: black;
 }
 
@@ -101,6 +105,7 @@ div.tooltip{
 <!--Place all DOM elements here -->
 <script>
 var data = {
+	drugName: "Pulmozyme",
 	"treatmentDates" : [	
 		{date: "2013/08/20"},
 		{date: "2014/04/20"}
@@ -148,8 +153,7 @@ var data = {
 						{  date: "2013/10/10" },
 						{  date: "2013/10/15" }		
 					]
-				]	
-};
+				]};
 
 var dateParser = d3.timeParse("%Y/%m/%d");
 
@@ -263,6 +267,16 @@ function plot(params){
 		.style("text-anchor", "start")
 		.attr("transform", "translate(" + getDatefromStartOrEnd(params.data.treatmentDates, 5, "end") +"," + ((height/3)*2) + ")")
 		.text("Discontinued");	
+		
+	this.append("text")
+		.attr("x",0)
+		.attr("y",0)
+		.classed("drugLabel", true)
+		.style("text-anchor", "start")
+		.attr("transform", "translate(" + x(dateParser(d3.min(params.data.treatmentDates, function(d){
+				return d.date;
+			}))) +"," + (height/3) + ")")
+		.text(params.data.drugName);	
 
 	this.append("g")
 		.classed("x axis", true)
