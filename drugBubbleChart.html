@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Learning D3</title>
+	<link rel="stylesheet" href="drugBubbleChart.css">
+<script src="https://d3js.org/d3.v4.min.js"></script> </head>
+</head>
+<body>
+<!--Place all DOM elements here -->
+<script type="text/javascript" src="drugData.js"></script>
+<script>
+var w = 800;
+var h = 550;
+var margin = {
+	top:80,
+	bottom: 80,
+	left: 80,
+	right: 80
+};
+var width = w - margin.left - margin.right;
+var height = h - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+			.attr("id", "chart")
+			.attr("width", w)
+			.attr("height", h);
+			
+var chart = svg.append("g")
+			.classed("display", true)
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+var tickValues = [18,25,32,39,46,53,60,67,74];
+
+var x = d3.scaleLinear()
+			.domain(d3.extent(drugData, function(d){
+				return d.averageMonthlyCost;
+			}))
+			.range([0,width])
+var y = d3.scaleLinear()
+			.domain([1,5])
+			.range([height, 0]);
+var xAxis = d3.axisBottom(x).tickValues(tickValues);
+
+var yAxis = d3.axisLeft(y)
+				.ticks(5)
+				.tickFormat(function(d){
+					return d*20 + "%"
+				})
+				.tickSize(10);
+var xGridlines = d3.axisBottom(x).tickValues(tickValues).tickSize(-height, -height).tickFormat(function(d) { return "$" + d; });
+				
+var yGridlines = d3.axisLeft(y).tickSize(-width,0,0 )
+					.tickFormat("")
+					
+var responseScale = d3.scaleLinear()
+		.domain(d3.extent(drugData, function(d){
+			return d.responses;
+		}))
+		.range([2,30]);
+var initialize = 1;
+
+function drawAxis(params){
+	if(initialize){
+		this.append("g")
+			.call(params.gridlines.x)
+			.classed("gridline x", true)
+			.attr("transform", "translate(" + 0 + "," + height + ")");
+			
+		<!-- this.append("g") -->
+			<!-- .call(params.gridlines.y) -->
+			<!-- .classed("gridline y", true) -->
+			<!-- .attr("transform", "translate(" + 0 + "," + 0 + ")"); --> // removes y gridlines
+			
+		<!-- this.append("g") -->
+			<!-- .call(params.axis.x) -->
+			<!-- .classed("axis x", true) -->
+			<!-- .attr("transform", "translate(" + 0 + "," + height + ")"); -->
+			
+		this.append("g")
+			.call(params.axis.y)
+			.classed("axis y", true)
+			.attr("transform", "translate(" + 0 + "," + 0 + ")");
+			
+		this.append("g")
+			.append("text")
+			.classed("xaxis-label", true)
+			.attr("transform", "translate(" + width/12 + "," + (height + margin.bottom/2) + ")")
+			.text("Average Monthly Cost");
+			
+		this.append("g")
+			.append("text")
+			.classed("xaxis-label", true)
+			.attr("transform", "translate(" + 0 + "," + -(margin.top/5) + ")")
+			.text("Days with Drug");
+			
+		this.append("g")
+			.append("text")
+			.classed("chart-header", true)
+			.text("Top 50 Drugs")
+			.attr("transform", "translate(" + width/2+ "," + -(margin.top/2) + ")");
+			
+		initialize = 0;
+	}
+}
+function plot(params){
+	var self = this;
+
+	var tooltip = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0);	
+	
+	
+	drawAxis.call(this,params);
+	//Create a group for each type of donut
+	this.selectAll(".donut")
+		.data(params.data)
+		.enter()
+			.append("g")
+			.attr("class", function(d){
+				return d.drugName;
+			})
+			.classed("donut", true);
+			
+		var arr = params.data.map(function(d){
+				return {
+					key: d.drugName,
+					value: d.daysWithDrug,
+					averageMonthlyCost: d.averageMonthlyCost,
+					responses: d.responses
+				};
+			});
+			
+		console.log(arr);
+		
+		//Setup circles
+		this.selectAll(".response")
+			.data(arr)
+			.enter()
+				.append("circle")
+				.classed("response", true);
+	
+		
+		//Update circles
+		this.selectAll(".response")
+			.attr("r", function(d){ return responseScale(d.responses); })
+			.attr("cx", function(d){ return x(d.averageMonthlyCost); })
+			.attr("cy", function(d){ return y(d.value); })
+			<!-- .call(function(d) { redBubble(d); }) -->
+			.style("fill", function(d){ 
+				var num = d.averageMonthlyCost + d.value + d.responses; 
+				if(num %2 == 0){ 
+					 return "#BD000F";
+				}else{
+					return "#339F3F";
+				}
+			})
+			.style("stroke-width", 1)
+			.style("fill-opacity", .25)
+			.style("stroke", function(d){
+			var num = d.averageMonthlyCost + d.value + d.responses; 
+				if(num %2 == 0){ 
+					 return "#BD000F";
+				}else{
+					return "#339F3F";
+				}
+			})
+			.on("mouseover", function(d){
+				tooltip.transition()
+					.duration(500)
+					.style("opacity", .85)	
+					tooltip.html(
+					"<table><tr><td class='col-1'><strong> Drug Name </strong></td><td  class='col-2'><strong>" +d.key+"</strong></td></tr> <tr><td class='col-1'><strong > Days with Drug </strong></td><td  class='col-2'><strong>" +(d.value *20) + " %</strong></td><tr><td class='col-1'><strong> Average Monthly Cost </strong></td><td  class='col-2'><strong> $" + d.averageMonthlyCost + "</strong></td></tr></table>"				
+					)
+					.style("left", function(d){
+						var elmnt = document.getElementsByClassName("tooltip");
+						if(d3.event.pageX > (w*.75)){
+							return d3.event.pageX - elmnt[0].offsetWidth + "px"
+						}
+						return d3.event.pageX+15 + "px"
+					})
+					.style("top", function(d){
+						var elmnt = document.getElementsByClassName("tooltip");
+							
+						if(((elmnt[0].offsetHeight) + d3.event.pageY) > (height+ margin.top)){
+							console.log("too high");
+							console.log(d3.event.pageY-margin.top + ": page y")
+							console.log(height)
+							console.log(height-(elmnt[0].offsetHeight))
+							
+							return height+margin.top-(elmnt[0].offsetHeight) + "px";
+						}  
+						if(((elmnt[0].offsetHeight/2) + d3.event.pageY) < (margin.top+ elmnt[0].offsetHeight)){
+							console.log("too low");
+							return d3.event.pageY +"px";
+						}  					
+							
+						return d3.event.pageY - (elmnt[0].offsetHeight/2) + "px";
+					})
+				})
+			.on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);}); 
+
+		//Remove any unbound elements
+		this.selectAll(".response").data(arr).exit().remove();
+	};
+
+plot.call(chart, {
+	data: drugData,
+	gridlines:{
+		x: xGridlines,
+		y: yGridlines
+	},
+	axis:{
+		x: xAxis,
+		y: yAxis
+	}
+});
+
+<!-- function redBubble(bubble){ -->
+	<!-- var num = Math.random(); -->
+	<!-- console.log(num) -->
+	<!-- if(num > .5){  -->
+	<!-- bubble.style("opacity", .25).style("stroke", "#BD000F").style("fill", "#BD000F"); -->
+	<!-- } -->
+	<!-- else{ -->
+		<!-- bubble.style("fill", "#339F3F").style("stroke", "#339F3F").style("opacity", .25); -->
+
+	<!-- } -->
+	
+<!-- } -->
+
+
+</script>
+</body>
+</html>

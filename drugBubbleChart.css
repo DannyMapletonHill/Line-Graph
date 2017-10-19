@@ -1,0 +1,104 @@
+body,html{
+	margin: 0;
+	padding: 0;
+	font-family: "Helvetica";
+	fill:#223A54;
+	font-size: 0.95em;
+	text-align: center;
+}
+#chart{
+	border: 1px solid #CCC;
+}
+
+.bar-label{
+	fill: black;
+	text-anchor: middle;
+	font-size: 18px;
+}
+
+.axis path,
+.axis line{
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+	 visibility:hidden;  /*removes ticks next to x-y labels */
+}
+.gridline path,
+.gridline line{
+	fill: none;
+	stroke: #ccc;
+	shape-rendering: crispEdges;
+}
+.trendline {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 4px;
+}
+.area{
+	opacity: 0.25;
+	fill: #ccc;
+	stroke: #ccc;
+	stroke-width: 1px;
+}
+
+.highlight{
+	opacity: 1;
+	cursor: hand;
+}
+.xaxis-label, .yaxis-label{
+	text-anchor: middle;
+	transform-origin: 5px;
+	font-size:12px;
+	fill:#81868A;
+
+}
+
+.chart-header{
+	text-transform: capitalize;
+	font-size: 125%;
+}
+.tick text{
+	font-size:12px;
+	fill: #81868A;
+}
+path.domain{
+		fill: #F7FAFC;
+
+}
+
+div.tooltip{
+	position:absolute;
+	width:auto;
+	height:auto;
+	padding:5px;
+	background-color:white;
+	border-radius: 2px;
+	box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+	pointer-events: none;			 ///*very important */
+	font-size: 12px;
+	fill: #81868A;
+	}
+	
+.col-1 {
+	text-align: right;
+			color:#81868A;
+}
+.col-2 {
+	text-align: left;
+	color: #223A54;
+}
+
+table {
+  border-spacing: 2px 2px;
+  padding: 0 8px 8px 0;
+}
+
+td {
+	padding-right: 6px;
+	padding-left: 6px;
+	width: auto;
+	height: auto;
+	text-align: center;
+}
+
+

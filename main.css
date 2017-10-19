@@ -1,12 +1,13 @@
 body,html{
 	margin: 0;
 	padding: 0;
-	font-family: "Arial", sans-serif;
+	font-family: "Helvetica";
+	color: #81868A;
 	font-size: 0.95em;
 	text-align: center;
 }
 #chart{
-	background-color: #F5F2EB;
+	/* background-color: #F5F2EB; */
 	border: 1px solid #CCC;
 }
 .bar{
@@ -23,6 +24,7 @@ body,html{
 	fill: none;
 	stroke: #000;
 	shape-rendering: crispEdges;
+	 visibility:hidden;  /*removes ticks next to x-y labels */
 }
 .gridline path,
 .gridline line{
@@ -41,18 +43,52 @@ body,html{
 	stroke: #ccc;
 	stroke-width: 1px;
 }
+
 .donut{
 	opacity: 0.1;
 }
+
 .highlight{
 	opacity: 1;
 	cursor: hand;
 }
-y .axis-label{
+.xaxis-label, .yaxis-label{
 	text-anchor: middle;
 	transform-origin: 5px;
+	font-size:12px;
 }
+
 .chart-header{
 	text-transform: capitalize;
 	font-size: 125%;
 }
+.tick text{
+	font-size:12px;
+}
+
+
+div.tooltip{
+	position:absolute;
+	width:auto;
+	height:auto;
+	padding:5px;
+	background-color:white;
+	border-radius: 2px;
+	box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+	pointer-events: none;			 ///*very important */
+	font-family: sans-serif;
+	font-size: 12px;
+	fill: #81868A;
+	}
+	
+.col-1 {
+	text-align: right;
+			color:#81868A;
+
+}
+.col-2 {
+	text-align: left;
+	width: 50%;
+	color: #223A54;
+	}
+
