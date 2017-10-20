@@ -73,11 +73,34 @@ div.tooltip{
 	padding:5px;
 	background-color:white;
 	border-radius: 2px;
-	box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+	box-shadow: 0px 2px 4px #000000;
 	pointer-events: none;			 ///*very important */
 	font-size: 12px;
 	fill: #81868A;
+	 /* display: none; */ 
 	}
+	
+div.pointer{
+	position:absolute;
+	padding:5px;
+	pointer-events: none;
+	width:auto;
+	height:auto;	///*very important */
+	font-size: 12px;
+	border: 0px;
+	background-color:white;
+	border-radius: 2px;
+	display: inline;
+	height: 10px;
+	width: 10px;
+	fill: #81868A;
+	transform: rotate(45deg);
+    /* box-shadow: -5px 0 5px -5px #333, 5px 0 5px -5px #333; */
+	/* border: 1px black; */
+	/*box-shadow:  2px -2px 4px -1px #000000; */
+
+
+}
 	
 .col-1 {
 	text-align: right;

@@ -10,6 +10,12 @@
 <!--Place all DOM elements here -->
 <script type="text/javascript" src="drugData.js"></script>
 <script>
+
+var translucent = .25;
+var shadedIn = 1; 
+var pointerBoxSide = 10;
+
+
 var w = 800;
 var h = 550;
 var margin = {
@@ -61,6 +67,7 @@ var responseScale = d3.scaleLinear()
 var initialize = 1;
 
 function drawAxis(params){
+	
 	if(initialize){
 		this.append("g")
 			.call(params.gridlines.x)
@@ -105,12 +112,16 @@ function drawAxis(params){
 }
 function plot(params){
 	var self = this;
-
+		
 	var tooltip = d3.select("body").append("div")
 		.attr("class", "tooltip")
-		.style("opacity", 0);	
-	
-	
+		.style("opacity", 0);
+		
+	var pointer = d3.select("body").append("div")
+		.attr("class", "pointer")
+		//.attr("class", "")
+		.style("opacity",0);
+		
 	drawAxis.call(this,params);
 	//Create a group for each type of donut
 	this.selectAll(".donut")
@@ -130,10 +141,12 @@ function plot(params){
 					responses: d.responses
 				};
 			});
+		
+		arr.sort(function(a,b){ return b.responses - a.responses  })
 			
 		console.log(arr);
 		
-		//Setup circles
+	//Setup circles
 		this.selectAll(".response")
 			.data(arr)
 			.enter()
@@ -156,7 +169,7 @@ function plot(params){
 				}
 			})
 			.style("stroke-width", 1)
-			.style("fill-opacity", .25)
+			.style("fill-opacity", translucent)
 			.style("stroke", function(d){
 			var num = d.averageMonthlyCost + d.value + d.responses; 
 				if(num %2 == 0){ 
@@ -165,40 +178,86 @@ function plot(params){
 					return "#339F3F";
 				}
 			})
+			.attr("class", function(d){
+			return "bubble_"+ d.averageMonthlyCost +"_"+ d.value +"_"+ d.responses
+			})
 			.on("mouseover", function(d){
+				var selectedBubble = document.getElementsByClassName("bubble_"+ d.averageMonthlyCost +"_"+ d.value +"_"+ d.responses)[0]
+				selectedBubble.style.fillOpacity = shadedIn
+				pointer.transition()
+					.duration(1)
+					.style("opacity", shadedIn)						
+					.style("left", function(d){
+						var elmnt = document.getElementsByClassName("pointer");
+						if(d3.event.pageX > (w*.75)){
+							console.log("push pointer left")
+							elmnt[0].style.boxShadow= "2px -2px 2px -2px #000000";
+							return d3.event.pageX - (pointerBoxSide* Math.sqrt(2))*1.5 + "px"
+						}
+						elmnt[0].style.boxShadow= "-2px 2px 2px -2px #000000";	
+						console.log("X-pointer: "+ d3.event.pageX + (pointerBoxSide* Math.sqrt(2))/2);
+						console.log("r val: " +selectedBubble.r.baseVal.value);
+						return d3.event.pageX + (pointerBoxSide* Math.sqrt(2)) + "px"
+
+						
+						//return selectedBubble.cx.baseVal.value + selectedBubble.r.baseVal.value + margin.left +(pointerBoxSide* Math.sqrt(2))/2 +"px";
+						
+					})					
+					.style("top", function(d){
+						var elmnt = document.getElementsByClassName("pointer");
+							
+						if(((elmnt[0].offsetHeight) + d3.event.pageY) > (height+ margin.top)){
+												
+							return height+margin.top-(elmnt[0].offsetHeight)-5 + "px";
+						}  
+						if(((elmnt[0].offsetHeight/2) + d3.event.pageY) < (margin.top+ elmnt[0].offsetHeight)){
+							return (d3.event.pageY - (d3.event.pageY-margin.top))+(pointerBoxSide* Math.sqrt(2))/2 +"px";
+						}  									
+						return d3.event.pageY- (pointerBoxSide* Math.sqrt(2))/2 +"px";
+					})
+									
 				tooltip.transition()
-					.duration(500)
-					.style("opacity", .85)	
+					.duration(1)
+					.style("opacity", shadedIn)	
 					tooltip.html(
 					"<table><tr><td class='col-1'><strong> Drug Name </strong></td><td  class='col-2'><strong>" +d.key+"</strong></td></tr> <tr><td class='col-1'><strong > Days with Drug </strong></td><td  class='col-2'><strong>" +(d.value *20) + " %</strong></td><tr><td class='col-1'><strong> Average Monthly Cost </strong></td><td  class='col-2'><strong> $" + d.averageMonthlyCost + "</strong></td></tr></table>"				
 					)
 					.style("left", function(d){
-						var elmnt = document.getElementsByClassName("tooltip");
+						//var elmntWidth = document.getElementsByClassName("tooltip")[0].offsetWidth;
+						var elmntWidth = 292;
+
+						console.log("tooltipX: "+(selectedBubble.cx.baseVal.value + selectedBubble.r.baseVal.value +(pointerBoxSide* Math.sqrt(2))+margin.left));
+						
 						if(d3.event.pageX > (w*.75)){
-							return d3.event.pageX - elmnt[0].offsetWidth + "px"
+
+							console.log("pgX: " + d3.event.pageX + " w*.75:" + w*.75 + " pos: "+(d3.event.pageX - elmntWidth - (pointerBoxSide* Math.sqrt(2)))+2 );
+							console.log(elmntWidth);
+							return (d3.event.pageX - elmntWidth- (pointerBoxSide* Math.sqrt(2)))+2 + "px"						
 						}
-						return d3.event.pageX+15 + "px"
+						return (d3.event.pageX + (pointerBoxSide* Math.sqrt(2)))+2 + "px"						
+						//return (selectedBubble.cx.baseVal.value + (selectedBubble.r.baseVal.value*2) +(pointerBoxSide)+margin.left) + "px"
 					})
 					.style("top", function(d){
 						var elmnt = document.getElementsByClassName("tooltip");
 							
-						if(((elmnt[0].offsetHeight) + d3.event.pageY) > (height+ margin.top)){
-							console.log("too high");
-							console.log(d3.event.pageY-margin.top + ": page y")
-							console.log(height)
-							console.log(height-(elmnt[0].offsetHeight))
+						if(((elmnt[0].offsetHeight)/2 + d3.event.pageY) > (height+ margin.top)){
+							<!-- console.log("too high"); -->
+
 							
 							return height+margin.top-(elmnt[0].offsetHeight) + "px";
 						}  
 						if(((elmnt[0].offsetHeight/2) + d3.event.pageY) < (margin.top+ elmnt[0].offsetHeight)){
-							console.log("too low");
-							return d3.event.pageY +"px";
-						}  					
-							
+							<!-- console.log("too low"); -->
+							return (d3.event.pageY - (d3.event.pageY-margin.top)) +"px";
+						}  											
 						return d3.event.pageY - (elmnt[0].offsetHeight/2) + "px";
 					})
 				})
-			.on("mouseout", function(d){ tooltip.transition().duration(300).style("opacity", 0);}); 
+			.on("mouseout", function(d){
+			document.getElementsByClassName("bubble_"+ d.averageMonthlyCost +"_"+ d.value +"_"+ d.responses)[0].style.fillOpacity = translucent;
+			tooltip.transition().duration(300).style("opacity", 0)
+			pointer.transition().duration(300).style("opacity", 0);}); 
+
 
 		//Remove any unbound elements
 		this.selectAll(".response").data(arr).exit().remove();
@@ -220,7 +279,7 @@ plot.call(chart, {
 	<!-- var num = Math.random(); -->
 	<!-- console.log(num) -->
 	<!-- if(num > .5){  -->
-	<!-- bubble.style("opacity", .25).style("stroke", "#BD000F").style("fill", "#BD000F"); -->
+	<!-- bubble.style("opacity", translucent).style("stroke", "#BD000F").style("fill", "#BD000F"); -->
 	<!-- } -->
 	<!-- else{ -->
 		<!-- bubble.style("fill", "#339F3F").style("stroke", "#339F3F").style("opacity", .25); -->
